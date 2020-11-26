@@ -27,7 +27,7 @@
               <th>Revocation</th>
               <th>Serial</th>
               <th>Details</th>
-              <th></th>
+              <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -35,11 +35,7 @@
             {{range .certificates}}
               {{ if ne .Details.Name "server"}}
               <tr>
-                  <td>
-                    <a href="{{urlfor "CertificatesController.Download" ":key" .Details.Name}}">
-                      {{ .Details.Name }}
-                    </a>
-                  </td>
+                  <td>{{ .Details.Name }}</td>
                   <td>{{ .EntryType }}</td>
                   <td>{{ dateformat .ExpirationT "2006-01-02 15:04"}}</td>
                   {{if eq .Revocation ""}}
@@ -53,6 +49,24 @@
                     <span class="label label-warning">CN: {{ .Details.CN }}</span>
                     <span class="label label-warning">Email: {{ .Details.Email }}</span>
                   </td>
+                  {{if eq .Revocation ""}}
+                    <td style="display: flex;">
+                      <a class="btn btn-primary btn-xs" role="button"
+                        href="{{urlfor "CertificatesController.Download" ":key" .Details.Name}}">
+                        Download
+                      </a>
+                      <form style="margin-left: 4px;" action="{{urlfor "CertificatesController.Revoke" ":key" .Details.Name}}" method="POST">
+                        <button class="btn btn-danger btn-xs revoke" type="submit" value="revoke">Revoke</button>
+                      </form>
+                    </td>
+                  {{else}}
+                    <td>
+                      <a class="btn btn-primary btn-xs" role="button"
+                        href="{{urlfor "CertificatesController.Download" ":key" .Details.Name}}">
+                        Download
+                      </a>
+                    </td>
+                  {{end}}
               </tr>
               {{ end }}
             {{end}}
@@ -106,4 +120,37 @@
     </div>
     </form>
     </div>
+
+
+<div id="confirm" class="modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">Are you sure?</div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-danger" id="revoke">Revoke</button>
+        <button type="button" data-dismiss="modal" class="btn" id="cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    $("button.revoke").on('click', function(e) {
+        var $form = $(this).closest('form');
+        e.preventDefault();
+        $('#confirm').modal({
+            backdrop: 'static',
+            keyboard: false
+        })
+        .on('click', '#revoke', function(e) {
+            $form.trigger('submit');
+          });
+        $("#cancel").on('click',function(e){
+          e.preventDefault();
+          $('#confirm').modal('hide');
+        });
+      });
+  });
+</script>
 {{end}}

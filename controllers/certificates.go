@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/adamwalach/go-openvpn/client/config"
+	mi "github.com/adamwalach/go-openvpn/server/mi"
 	"github.com/adamwalach/openvpn-web-ui/lib"
 	"github.com/adamwalach/openvpn-web-ui/models"
 	"github.com/astaxie/beego"
@@ -121,6 +122,27 @@ func (c *CertificatesController) Post() {
 			}
 		}
 	}
+	c.showCerts()
+}
+
+// @router /certificates/:key/revoke [post]
+func (c *CertificatesController) Revoke() {
+	name := c.GetString(":key")
+	c.TplName = "certificates.html"
+	flash := beego.NewFlash()
+
+	if err := lib.RevokeCertificate(name); err != nil {
+		beego.Error(err)
+		flash.Error(err.Error())
+		flash.Store(&c.Controller)
+	} else {
+		flash.Success("Certificate has been revoked")
+		client := mi.NewClient(models.GlobalCfg.MINetwork, models.GlobalCfg.MIAddress)
+		if err := client.Signal("SIGTERM"); err != nil {
+			flash.Warning("Certificate has been revoked but OpenVPN server was NOT reloaded: " + err.Error())
+		}
+	}
+
 	c.showCerts()
 }
 

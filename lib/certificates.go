@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os/exec"
@@ -110,4 +111,24 @@ func CreateCertificate(name string, email string) error {
 		return err
 	}
 	return nil
+}
+
+func RevokeCertificate(name string) error {
+	rsaPath := "/usr/share/easy-rsa/"
+	varsPath := models.GlobalCfg.OVConfigPath + "keys/vars"
+	cmd := exec.Command("/bin/bash", "-c",
+		fmt.Sprintf(
+			"source %s &&"+
+				"%s/revoke-full %s", varsPath, rsaPath, name))
+	cmd.Dir = models.GlobalCfg.OVConfigPath + "keys"
+	output, err := cmd.CombinedOutput()
+	if bytes.Contains(output, []byte("revoked")) {
+		// The command is expected to output an error msg and exit with
+		// an error code.
+		return nil
+	} else {
+		beego.Debug(string(output))
+		beego.Error(err)
+		return err
+	}
 }
