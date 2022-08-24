@@ -8,6 +8,7 @@ dev tun
 ca {{ .Ca }}
 cert {{ .Cert }}
 key {{ .Key }}
+crl-verify keys/crl.pem
 
 cipher {{ .Cipher }}
 keysize {{ .Keysize }}
