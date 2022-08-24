@@ -98,8 +98,6 @@ func createDefaultOVConfig() {
 		Config: config.Config{
 			Port:                1194,
 			Proto:               "udp",
-			DNSServerOne:        "8.8.8.8",
-			DNSServerTwo:        "8.8.4.4",
 			Cipher:              "AES-256-CBC",
 			Keysize:             256,
 			Auth:                "SHA256",
@@ -112,8 +110,6 @@ func createDefaultOVConfig() {
 			Ca:                  "keys/ca.crt",
 			Cert:                "keys/server.crt",
 			Key:                 "keys/server.key",
-			ExtraServerOptions:  "",
-			ExtraClientOptions:  "",
 		},
 	}
 	o := orm.NewOrm()

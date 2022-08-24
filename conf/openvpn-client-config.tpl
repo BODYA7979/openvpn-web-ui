@@ -16,5 +16,3 @@ cert {{ .Cert }}
 key {{ .Key }}
 
 comp-lzo
-
-{{ .ExtraClientOptions }}
