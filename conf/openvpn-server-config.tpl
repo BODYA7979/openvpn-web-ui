@@ -33,3 +33,7 @@ log         openvpn.log
 verb 3
 
 mute 10
+
+client-to-client
+topology subnet
+push "route 192.168.1.0 255.255.255.0"

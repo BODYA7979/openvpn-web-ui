@@ -54,15 +54,16 @@
                       <form style="margin-left: 4px;" action="{{urlfor "CertificatesController.Revoke" ":key" .Details.Name}}" method="POST">
                         <button class="btn btn-danger btn-xs revoke" type="submit" value="revoke">Revoke</button>
                       </form>
-                    </td>
-                  {{else}}
-                    <td>
                       <a href="{{urlfor "CertificatesController.Download" ":key" .Details.Name}}">
                         {{ .Details.Name }}.zip
                       </a>
                       <a href="{{urlfor "CertificatesController.DownloadSingleConfig" ":key" .Details.Name}}">
                         {{ .Details.Name }}.ovpn
                       </a>
+                    </td>
+                  {{else}}
+                    <td>
+                      
                     </td>
                   {{end}}
               </tr>
